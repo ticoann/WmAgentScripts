@@ -1,16 +1,17 @@
-from WMCoreService.WMStatsClient import WMStatsClient
-from WMCoreService.DataStruct.RequestInfoCollection import RequestInfoCollection
+from WMCore.Services.WMStats.WMStatsReader import WMStatsReader
+from WMCore.Services.WMStats.DataStruct.RequestInfoCollection import RequestInfoCollection
 
 if __name__ == "__main__":
     url = "https://cmsweb-testbed.cern.ch/couchdb/wmstats"
-    testbedWMStats = WMStatsClient(url)
+    reqDBURL = "https://cmsweb-testbed.cern.ch/couchdb/reqmgr_workload_cache"
+    testbedWMStats = WMStatsReader(url, reqDBURL)
     print "start to getting job information from %s" % url
     print "will take a while\n"
-    print testbedWMStats.server.listDatabases()
+    print testbedWMStats.couchServer.listDatabases()
     #print testbedWMStats._getRequestAndAgent()
     #print testbedWMStats._getAllDocsByIDs(["alahiff_HLTCloudTesting_130412_172143_4087"])
-    print testbedWMStats.getRequestByNames(["alahiff_HLTCloudTesting_130412_172143_4087"], jobInfoFlag = True)
-    requests = testbedWMStats.getRequestByStatus("assigned", jobInfoFlag = True)
+    #print testbedWMStats.getRequestByNames(["alahiff_HLTCloudTesting_130412_172143_4087"], jobInfoFlag = True)
+    requests = testbedWMStats.getRequestByStatus("assigned", jobInfoFlag = True, legacyFormat = True)
     requestCollection = RequestInfoCollection(requests)
     result = requestCollection.getJSONData()
     print result

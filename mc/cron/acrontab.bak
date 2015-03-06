@@ -1,0 +1,17 @@
+# WORKFLOW TABLE
+00 00 * * * vocms174 source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env.sh ; source /data/srv/wmagent/current/apps/wmagent/etc/profile.d/init.sh ; python /afs/cern.ch/user/c/cmst2/workflowsOverview/csvTable.py &> /afs/cern.ch/user/c/cmst2/workflowsOverview/csvTable.log ; mv table.* /afs/cern.ch/user/c/cmst2/www/workflows/
+# prepare csv input to overview plots
+0 4 * * * vocms174 . /afs/cern.ch/user/c/cmst2/progress_plots/prepare_progress_plots.sh &> /afs/cern.ch/user/c/cmst2/progress_plots/prepare_progress_plots.log
+# OVERVIEW
+10 * * * * vocms174 source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env_3_2.11-1.sh ; SCRIPT="getoverview" ; python26 /afs/cern.ch/user/c/cmst2/mc/cron/$SCRIPT.py &> /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp && mv /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log
+# UPDATE DAS CLI
+2 6 * * * vocms174 wget https://cmsweb.cern.ch/das/cli -O /afs/cern.ch/user/c/cmst2/mc/external/das_cli.py
+# MONITORING
+*/20 * * * * vocms174 source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env_3_2.11-1.sh ; SCRIPT="getdata"; python26 /afs/cern.ch/user/c/cmst2/mc/cron/$SCRIPT.py &> /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp && mv /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log ; SCRIPT="makesummary"; python26 /afs/cern.ch/user/c/cmst2/mc/cron/$SCRIPT.py &> /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp && mv /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log ;
+# DBS JSON
+27 12 * * 0 vocms174 SCRIPT="datasetstats"; python /afs/cern.ch/user/c/cmst2/mc/scripts/dbs3wrapper.sh /afs/cern.ch/user/c/cmst2/mc/cron/$SCRIPT.py &> /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp && mv /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log 
+# GENSIM WAITING ROOM
+27 6 * * 0 vocms174 source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env_3_2.11-1.sh ; SCRIPT="generate-gensim-wr" ; python26 /afs/cern.ch/user/c/cmst2/mc/cron/$SCRIPT.py &> /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp && mv /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log
+# DISKTAPE, UPLINKS
+34 */3 * * * vocms174 source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env_3_2.11-1.sh ; SCRIPT="disktape" ; python26 /afs/cern.ch/user/c/cmst2/mc/cron/$SCRIPT.py &> /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp && mv /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log
+44 */3 * * * vocms174 source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env_3_2.11-1.sh ; SCRIPT="getuplinks" ; python26 /afs/cern.ch/user/c/cmst2/mc/cron/$SCRIPT.py &> /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp && mv /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log.tmp /afs/cern.ch/user/c/cmst2/mc/logs/$SCRIPT.log

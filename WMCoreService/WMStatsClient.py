@@ -4,6 +4,51 @@ ReqMgr request handling.
 """
 from WMCoreService.CouchClient import CouchServer
 
+REQUEST_PROPERTY_MAP = {
+           "_id": "_id",
+           "InputDataset": "inputdataset",
+           "PrepID": "prep_id",
+           "Group": "group",
+           "RequestDate": "request_date",
+           "Campaign": "campaign",
+           "RequestName": "workflow",
+           "RequestorDN": "user_dn",
+           "RequestPriority": "priority",
+           "Requestor": "requestor",
+           "RequestType": "request_type",
+           "DbsUrl": "dbs_url",
+           "SoftwareVersions": "cmssw",
+           "OutputDatasets": "outputdatasets",
+           "RequestTransition": "request_status", # Status: status,  UpdateTime: update_time
+           "SiteWhitelist": "site_white_list",
+           "Teams": "teams",
+           "TotalEstimatedJobs": "total_jobs",
+           "TotalInputEvents": "input_events",
+           "TotalInputLumis": "input_lumis",
+           "TotalInputFiles": "input_num_files",
+           "Run": "run",
+           # Status and UpdateTime is under "RequestTransition"
+           "Status": "status",
+           "UpdateTime": "update_time"
+        }
+
+def convertToLegacyFormat(requestDoc):
+    converted = {}
+    for key, value in requestDoc.items():
+        
+        if key == "RequestTransition":
+            newValue = []
+            for transDict in value:
+                newItem = {}
+                for transKey, transValue in transDict.items():
+                    newItem[REQUEST_PROPERTY_MAP.get(transKey, transKey)] = transValue
+                    newValue.append(newItem)
+            value = newValue
+        
+        converted[REQUEST_PROPERTY_MAP.get(key, key)] = value
+            
+    return converted
+
 def splitCouchServiceURL(serviceURL):
     """
     split service URL to couchURL and couchdb name
@@ -31,17 +76,21 @@ class WMStatsClient(object):
                     "aborted",
                     "rejected"]
     
-    def __init__(self, url):
+    def __init__(self, url, reqdbName = "reqmgr_workload_cache", reqdbCouchApp = "ReqMgr"):
         # main CouchDB database where requests/workloads are stored
         url = url or "https://cmsweb.cern.ch/couchdb/wmstats"
         couchUrl, dbName = splitCouchServiceURL(url)
         self.server = CouchServer(couchUrl)
         self.couchdb = self.server.connectDatabase(dbName)
         self.couchapp = "WMStats"
+        self.requestdb = self.server.connectDatabase(reqdbName)
+        self.reqdbCouchApp = reqdbCouchApp
     
     def getRequestByNames(self, requestNames, jobInfoFlag = False):
         data = self._getRequestByNames(requestNames, True)
         requestInfo = self._formatCouchData(data)
+        for requestName, doc in requestInfo.items():
+            requestInfo[requestName] = convertToLegacyFormat(doc)
         if jobInfoFlag:
             # get request and agent info
             self._updateReuestInfoWithJobInfo(requestInfo)
@@ -55,7 +104,8 @@ class WMStatsClient(object):
         
         data = self._getRequestByStatus(statusList, True)
         requestInfo = self._formatCouchData(data)
-
+        for requestName, doc in requestInfo.items():
+            requestInfo[requestName] = convertToLegacyFormat(doc)
         if jobInfoFlag:
             # get request and agent info
             self._updateReuestInfoWithJobInfo(requestInfo)
@@ -73,9 +123,18 @@ class WMStatsClient(object):
         if not options:
             options = {}
         options.setdefault("stale", "update_after")
-        if keys and type(keys) == str:
+        if keys and isinstance(keys, basestring):
             keys = [keys]
         return self.couchdb.loadView(self.couchapp, view, options, keys)
+    
+    def _getRequestDBCouchView(self, view, options, keys = []):
+        
+        if not options:
+            options = {}
+        options.setdefault("stale", "update_after")
+        if keys and isinstance(keys, basestring):
+            keys = [keys]
+        return self.requestdb.loadView(self.reqdbCouchApp, view, options, keys)
             
         
     def _formatCouchData(self, data, key = "id"):
@@ -143,7 +202,7 @@ class WMStatsClient(object):
         """
         options = {}
         options["include_docs"] = detail
-        result = self.couchdb.allDocs(options, requestNames)
+        result = self.requestdb.allDocs(options, requestNames)
         return result
         
     def _getRequestByStatus(self, statusList, detail = True):
@@ -153,7 +212,7 @@ class WMStatsClient(object):
         options = {}
         options["include_docs"] = detail
         keys = statusList or WMStatsClient.ACTIVE_STATUS
-        return self._getCouchView("requestByStatus", options, keys)
+        return self._getRequestDBCouchView("bystatus", options, keys)
     
     def _getRequestAndAgent(self, filterRequest = None):
         """

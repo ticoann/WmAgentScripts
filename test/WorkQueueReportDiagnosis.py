@@ -60,8 +60,8 @@ class WorkQueueReqMgrInterface():
             ele = elements[ele][0] # 1 element tuple
             try:
                 request = self.reqMgr.getRequest(ele['RequestName'])
-                if request['RequestStatus'] in ('failed', 'completed', 'announced',
-                                                'epic-FAILED', 'closed-out', 'rejected'):
+                if request['RequestStatus'] in ('failed', 'completed', 'announced', 
+                                                'closed-out', 'rejected'):
                     # requests can be done in reqmgr but running in workqueue
                     # if request has been closed but agent cleanup actions
                     # haven't been run (or agent has been retired)
@@ -106,6 +106,7 @@ class WorkQueueReqMgrInterface():
                          'running-closed': ['Running'],
                          'failed': ['Failed'],
                          'aborted': ['Canceled', 'CancelRequested'],
+                         'force-complete': ['Canceled', 'CancelRequested'],
                          'completed': ['Done']}
         if status in statusMapping:
             return statusMapping[status]

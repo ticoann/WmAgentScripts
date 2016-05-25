@@ -1,0 +1,2 @@
+import json
+print json.dumps([{"splitAlgo": "EventAwareLumiBased", "splitParams": {"max_events_per_lumi": 20000}, "taskName": "/sryu_McMTaskChain2_Sryu_reqmgr2_160318_050204_3263/EXO-RunIIFall15DR76-03799_0"}])

@@ -16,8 +16,8 @@ if __name__ == "__main__":
     fiveMonth = 60*60*24*30*5
     print len(data)
     for req, info in data.items(): 
-        #if current - info["RequestTransition"][-1]["UpdateTime"] > 60*60*24*30*5:
-        if info['Run'] < 271084:
+        #if current - info["RequestTransition"][-1]["UpdateTime"] > fiveMonth:
+        if info['Run'] < 273931:
             reqNames.append(req)
     print len(reqNames)        
     for reqname in reqNames:

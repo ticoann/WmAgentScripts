@@ -1,0 +1,10 @@
+
+# RESUBMISSION_INHERIT_ARGS = ["Memory", "SizePerEvent", "TimePerEvent", "DbsUrl", "Group", 
+#                              "RequestPriority", "PrepID", "SoftwareVersions", "CMSSWVersion",
+#                              "Team", "AcquisitionEra", "ProcessingString", "ProcessingVersion", 
+#                              "Dashboard", "MergedLFNBase", "UnmergedLFNBase", "MinMergeSize", 
+#                              "MaxMergeSize", "MaxMergeEvents", "MaxRSS", "MaxVSize", 
+#                              "BlockCloseMaxWaitTime", "BlockCloseMaxFiles", "BlockCloseMaxEvents", "BlockCloseMaxSize", 
+#                              "SoftTimeout", "GracePeriod", "TrustPUSitelists", "CustodialSites", 
+#                              "CustodialSubType", "NonCustodialSites", "NonCustodialSubType",
+#                              "AutoApproveSubscriptionSites", "SubscriptionPriority"]

@@ -24,6 +24,7 @@ reqmgrCouchDB = "reqmgr_workload_cache"
 
 queueParams = {'WMStatsCouchUrl': "%s/%s" % (COUCH, wmstatDBName)}
 queueParams['QueueURL'] = WEBURL
+queueParams['CouchUrl'] = COUCH
 queueParams['ReqMgrServiceURL'] = REQMGR2
 queueParams['RequestDBURL'] = "%s/%s" % (COUCH, reqmgrCouchDB)
 queueParams['central_logdb_url'] = LOG_DB_URL

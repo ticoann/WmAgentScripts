@@ -51,14 +51,10 @@ class RESTClient(object):
     def __init__(self, url, cert=None, key=None):
         logging.info("RESTClient URL: %s" % url)        
         if url.startswith("https://"):
-            logging.info("Using HTTPS protocol, getting user identity files ...")
-            proxyFile = "/tmp/x509up_u%s" % os.getuid()
-            if not os.path.exists(proxyFile):
-                proxyFile = "UNDEFINED" 
-            certFile = cert or os.getenv("X509_USER_CERT",
-                                         os.getenv("X509_USER_PROXY", proxyFile)) 
-            keyFile = key or os.getenv("X509_USER_KEY",
-                                       os.getenv("X509_USER_PROXY", proxyFile)) 
+            certFile = cert or os.getenv("X509_USER_CERT") 
+            keyFile = key or os.getenv("X509_USER_KEY") 
+            print certFile
+            print keyFile
             logging.info("Identity files:\n\tcert file: '%s'\n\tkey file:  '%s' " %
                          (certFile, keyFile))
             url = url.replace("https://", '')
@@ -82,7 +78,20 @@ class RESTClient(object):
         logging.debug("Reason: %s" % resp.reason)
         return resp.status, data
             
+class WMStatsClient(RESTClient):
+    
+    def __init__(self, cmsurl):
+        self.headers  =  {"Content-type": "application/json",
+                              "Accept": "application/json"}        
+        logging.info("ReqMgr url: %s" % cmsurl)
+        RESTClient.__init__(self, cmsurl)
         
+    def getActiveData(self):
+        
+        status, data = self.httpRequest("GET", "/wmstatsserver/data/requestcache", headers=self.headers)        
+        data = json.loads(data)
+        return data
+    
 
 class ReqMgrClient(RESTClient):
     """

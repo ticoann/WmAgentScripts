@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from WMCore.Services.ReqMgr.ReqMgr import ReqMgr
 from WMCore.WorkQueue.WorkQueue import globalQueue
 from pprint import pprint
@@ -64,8 +65,15 @@ def fixCompleteStatus(reqSvc, queue, status):
         
 if __name__ == "__main__":
     
-    for status in ["running-closed", "force-complete"]:
+    #for status in ["running-closed", "force-complete"]:
+    #    completedRequests = fixCompleteStatus(reqSvc, globalQ, status)
+    
+    #    for request in completedRequests:
+    #        reqSvc.updateRequestStatus(request, "completed")
+            
+    for status in ["aborted"]:
         completedRequests = fixCompleteStatus(reqSvc, globalQ, status)
     
         for request in completedRequests:
-            reqSvc.updateRequestStatus(request, "completed")
+            reqSvc.updateRequestStatus(request, "aborted-completed")
+            reqSvc.updateRequestStatus(request, "aborted-archived")

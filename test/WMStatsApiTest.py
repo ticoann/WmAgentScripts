@@ -4,10 +4,9 @@ from pprint import pprint
 base_url = "https://cmsweb.cern.ch"
 reqmgr_url = "%s/reqmgr2" % base_url
 wmstats_url = "%s/couchdb/wmstats" % base_url
-
 wmstats = WMStatsReader(wmstats_url)
 result = wmstats.agentsByTeam(False)
-
 print result
+# pprint(wmstats._getAgentInfo())
 result = wmstats.agentsByTeam(True)
 print result

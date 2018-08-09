@@ -201,12 +201,6 @@ class WMStatsClient(object):
         result = self.couchdb.allDocs(options, ids)
         
         return result
-    
-    # these should be in writer
-    def updateRequestStatus(self, request, status):
-        statusTime = {'status': status, 'update_time': int(time.time())}
-        return self.couchdb.updateDocument(request, self.couchapp, 'requestStatus',
-                    fields={'request_status': JSONEncoder().encode(statusTime)})
         
     def replaceRequestTransitionFromReqMgr(self, docs):
         """
